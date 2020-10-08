@@ -82,7 +82,7 @@ public class PlaceAndDrag : MonoBehaviour
                         PlacementObject[] allOtherObjects = PlacementObject.FindObjectsOfType<PlacementObject>();
                         foreach (PlacementObject placementObject in allOtherObjects)
                         {
-                            placementObject.Selected = placementObject == lastSelectedObject;
+                            placementObject.Selected = placementObject == lastSelectedObject;         
                         }
                     }
                 }

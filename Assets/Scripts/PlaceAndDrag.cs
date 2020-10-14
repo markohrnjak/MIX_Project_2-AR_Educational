@@ -82,7 +82,7 @@ public class PlaceAndDrag : MonoBehaviour
                         PlacementObject[] allOtherObjects = PlacementObject.FindObjectsOfType<PlacementObject>();
                         foreach (PlacementObject placementObject in allOtherObjects)
                         {
-                            placementObject.Selected = placementObject == lastSelectedObject;         
+                            placementObject.Selected = placementObject == lastSelectedObject;        
                         }
                     }
                 }
@@ -91,28 +91,28 @@ public class PlaceAndDrag : MonoBehaviour
             {
                 lastSelectedObject.Selected = false;
             }
-        }
 
-        //create on touch
-        if (m_RaycastManager.Raycast(touchPosition, s_Hits, TrackableType.PlaneWithinPolygon) && !IsPointerOverUIObject())  //cast a ray onto the plane that was touched 
-        {
-            Pose hitPose = s_Hits[0].pose;
+            //create on touch
+            if (m_RaycastManager.Raycast(touchPosition, s_Hits, TrackableType.PlaneWithinPolygon) && !IsPointerOverUIObject())  //cast a ray onto the plane that was touched 
+            {
+                Pose hitPose = s_Hits[0].pose;
 
-            if (lastSelectedObject == null)
-            {
-                lastSelectedObject = Instantiate(m_PrefabToPlace, hitPose.position, hitPose.rotation).GetComponent<PlacementObject>(); //place object and store in variable only if the placed object does not exist
-            }
-            else
-            {
-                if (lastSelectedObject.Selected)
+                if (lastSelectedObject == null)
                 {
-                    lastSelectedObject.transform.position = hitPose.position;
-                    lastSelectedObject.transform.rotation = hitPose.rotation;
+                    lastSelectedObject = Instantiate(m_PrefabToPlace, hitPose.position, hitPose.rotation).GetComponent<PlacementObject>(); //place object and store in variable only if the placed object does not exist
+                }
+                else
+                {
+                    if (lastSelectedObject.Selected)
+                    {
+                        lastSelectedObject.transform.position = hitPose.position;
+                        lastSelectedObject.transform.rotation = hitPose.rotation;
+                    }
                 }
             }
-
-
         }
+
+
     }
 
     //for checking if the touch is on UI or not

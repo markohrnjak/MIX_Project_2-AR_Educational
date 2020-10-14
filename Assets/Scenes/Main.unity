@@ -1109,8 +1109,8 @@ GameObject:
   - component: {fileID: 1059279907}
   - component: {fileID: 1059279910}
   - component: {fileID: 1059279909}
-  - component: {fileID: 1059279912}
   - component: {fileID: 1059279911}
+  - component: {fileID: 1059279912}
   m_Layer: 0
   m_Name: AR Session Origin
   m_TagString: Untagged

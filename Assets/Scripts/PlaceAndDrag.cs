@@ -18,7 +18,7 @@ public class PlaceAndDrag : MonoBehaviour
 
     private Vector2 touchPosition = default;
 
-    private PlacementObject lastSelectedObject = null;
+    private PlacementObject selectedObject = null;
 
     static List<ARRaycastHit> s_Hits = new List<ARRaycastHit>();
 
@@ -65,55 +65,59 @@ public class PlaceAndDrag : MonoBehaviour
     {
         if (Input.touchCount > 0)
         {
-            Touch touch = Input.GetTouch(0);                                                             //reference to first touch
+            //reference to first touch
+            Touch touch = Input.GetTouch(0);
             touchPosition = touch.position;
 
             if (touch.phase == TouchPhase.Began)
             {
                 Ray ray = ARCam.ScreenPointToRay(touch.position);
-                RaycastHit hitObject;
 
-                if (Physics.Raycast(ray, out hitObject))
+                if (Physics.Raycast(ray, out RaycastHit hitObject))
                 {
-                    lastSelectedObject = hitObject.transform.GetComponent<PlacementObject>();
-                    if (lastSelectedObject != null)
+                    selectedObject = hitObject.transform.GetComponent<PlacementObject>();
+                    if (selectedObject != null)
                     {
-                        //we are looking for objects with the PlacementObject script attached to them
+                        //get all the PalecemntObjects in the scene...
                         PlacementObject[] allOtherObjects = PlacementObject.FindObjectsOfType<PlacementObject>();
+
+                        //...go through each of them, the ones that are not getting raycasted get their Selected set to false because those do not need to be moved
+                        //if the selected object IS the one being selected, that means the one that is being touched is the one we want to move arund
                         foreach (PlacementObject placementObject in allOtherObjects)
                         {
-                            placementObject.Selected = placementObject == lastSelectedObject;        
+                            placementObject.Selected = placementObject == selectedObject;
                         }
                     }
                 }
             }
+
             if (touch.phase == TouchPhase.Ended)
             {
-                lastSelectedObject.Selected = false;
-            }
-
-            //create on touch
-            if (m_RaycastManager.Raycast(touchPosition, s_Hits, TrackableType.PlaneWithinPolygon) && !IsPointerOverUIObject())  //cast a ray onto the plane that was touched 
-            {
-                Pose hitPose = s_Hits[0].pose;
-
-                if (lastSelectedObject == null)
-                {
-                    lastSelectedObject = Instantiate(m_PrefabToPlace, hitPose.position, hitPose.rotation).GetComponent<PlacementObject>(); //place object and store in variable only if the placed object does not exist
-                }
-                else
-                {
-                    if (lastSelectedObject.Selected)
-                    {
-                        lastSelectedObject.transform.position = hitPose.position;
-                        lastSelectedObject.transform.rotation = hitPose.rotation;
-                    }
-                }
+                selectedObject.Selected = false;
             }
         }
 
 
+        if (m_RaycastManager.Raycast(touchPosition, s_Hits, TrackableType.PlaneWithinPolygon) && !IsPointerOverUIObject())
+        {
+            Pose hitPose = s_Hits[0].pose;
+
+            if (selectedObject == null)
+            {
+                selectedObject = Instantiate(m_PrefabToPlace, hitPose.position, hitPose.rotation).GetComponent<PlacementObject>();
+            }
+
+            else
+            {
+                if (selectedObject.Selected)
+                {
+                    selectedObject.transform.position = hitPose.position;
+                    selectedObject.transform.rotation = hitPose.rotation;
+                }
+            }
+        }
     }
+
 
     //for checking if the touch is on UI or not
     private bool IsPointerOverUIObject()
